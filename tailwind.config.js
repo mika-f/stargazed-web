@@ -1,8 +1,17 @@
 module.exports = {
-  purge: [
-    "./src/**/*.{ts,tsx}",
-    "./public/index.html",
-  ],
+  purge: {
+    content: [
+      "./src/**/*.{ts,tsx}",
+      "./public/index.html",
+    ],
+    options: {
+      safelist: [
+        /bg-.*/,
+        /text-.*/,
+        /border-.*/,
+      ]
+    }
+  },
   darkMode: "class",
   corePlugins: {
     container: false,
