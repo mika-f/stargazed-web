@@ -5,11 +5,9 @@ module.exports = {
       "./public/index.html",
     ],
     options: {
-      safelist: [
-        /bg-.*/,
-        /text-.*/,
-        /border-.*/,
-      ]
+      safelist: {
+        deep: [/dark/],
+      }
     }
   },
   darkMode: "class",
