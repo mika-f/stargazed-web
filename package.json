@@ -12,6 +12,9 @@
     "lint:eslint": "eslint --format friendly ./src"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "@tailwindcss/postcss7-compat": "^2.1.2",
     "axios": "^0.21.1",
     "marked": "^2.0.3",
@@ -22,6 +25,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-virtual": "^2.7.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
     "use-http": "^1.0.20",
     "utf8": "^3.0.0",

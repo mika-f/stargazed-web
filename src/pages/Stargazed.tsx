@@ -4,17 +4,23 @@ import marked from "marked";
 import useFetch from "use-http";
 import { decode } from "utf8";
 
-import LanguageSection from "../components/LanguageSection";
 import Container from "../components/Container";
+import Repository from "../components/Repository";
 import Select from "../components/Select";
+import Virtualized from "../components/Virtualized";
 
 type ExtractProps<T> = T extends React.VFC<infer R> ? R : null;
 
 type UnwrapArray<T> = T extends Array<infer R> ? R : null;
 
-type Languages = ExtractProps<typeof LanguageSection>[];
+type Language = {
+  name: string;
+  repositories: ExtractProps<typeof Repository>[];
+};
 
-type Repositories = ExtractProps<typeof LanguageSection>["repositories"];
+type Languages = Language[];
+
+type Repositories = ExtractProps<typeof Repository>[];
 
 type Selections = ExtractProps<typeof Select>["selections"];
 
@@ -44,6 +50,7 @@ const htmlToRepositories = (html: string): Languages => {
         description: elem[2].textContent!,
         name: elem[1].querySelector("a")?.textContent!,
         stars: parseInt(elem[4].textContent ?? "0", 10),
+        language: lang,
       };
 
       repositories.push(repo);
@@ -84,6 +91,10 @@ const Stargazed: React.VFC = () => {
 
   const hasContents = repository !== "" && languages.length > 0;
   const items = languages.map((w) => ({ label: w.name, value: w.name }));
+  const repositories = selections.flatMap((w) => {
+    const language = languages.find((v) => v.name === w.value)!;
+    return language.repositories;
+  });
 
   return (
     <Container>
@@ -93,13 +104,7 @@ const Stargazed: React.VFC = () => {
             <h1 className="text-4xl mt-8 mb-16">Stargazed Web</h1>
             <Select items={items} selections={selections} onSelectionChanged={onSelectionChanged} />
             <div className="px-4 text-left">
-              {selections.map((w) => {
-                const language = languages.filter((v) => v.name === w.value)[0];
-
-                return (
-                  <LanguageSection key={language.name} name={language.name} repositories={language.repositories} />
-                );
-              })}
+              <Virtualized repositories={repositories} />
             </div>
           </div>
         ) : (
