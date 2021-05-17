@@ -8,11 +8,13 @@ type Item = {
 type Props = {
   items: Item[];
   selections: Item[];
+  query: string;
   onSelectionChanged: (items: Item[]) => void;
+  onQueryChanged: (query: string) => void;
 };
 
 // Based on https://tailwindcomponents.com/component/multi-select
-const Select: React.VFC<Props> = ({ items, selections, onSelectionChanged }) => {
+const Select: React.VFC<Props> = ({ items, selections, query, onSelectionChanged, onQueryChanged }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const toggle = () => setIsExpanded(!isExpanded);
@@ -34,13 +36,17 @@ const Select: React.VFC<Props> = ({ items, selections, onSelectionChanged }) => 
     onSelectionChanged(newSelections);
   };
 
+  const onChanged: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    onQueryChanged(e.target.value);
+  };
+
   return (
     <div className="w-full flex flex-col items-center h-auto mx-auto">
       <div className="w-full px-4">
         <div className="flex flex-col items-center relative">
           <div className="w-full">
             <div className="my-2 p-1 flex border border-gray-200 bg-white rounded">
-              <div className="flex flex-auto  flex-wrap">
+              <div className="flex flex-wrap">
                 {selections.map((item) => (
                   <div
                     key={item.value}
@@ -73,6 +79,14 @@ const Select: React.VFC<Props> = ({ items, selections, onSelectionChanged }) => 
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="flex flex-grow">
+                <input
+                  className="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800"
+                  placeholder=""
+                  value={query}
+                  onChange={onChanged}
+                />
               </div>
               <div className="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200">
                 <button

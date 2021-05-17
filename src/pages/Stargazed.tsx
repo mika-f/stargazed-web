@@ -66,6 +66,7 @@ const Stargazed: React.VFC = () => {
   const [repository, setRepository] = useState<string>("");
   const [languages, setLanguages] = useState<Languages>([]);
   const [selections, setSelections] = useState<Selections>([]);
+  const [query, setQuery] = useState<string>("");
   const { get, response, loading, error } = useFetch("https://api.github.com");
 
   const onSubmit = async () => {
@@ -87,14 +88,21 @@ const Stargazed: React.VFC = () => {
     setSelections(newSelections);
   };
 
+  const onQueryChanged = (newQuery: string) => {
+    setQuery(newQuery);
+  };
+
   const isEnableSubmit = () => repository !== "" && repository.split("/").length === 2;
 
   const hasContents = repository !== "" && languages.length > 0;
   const items = languages.map((w) => ({ label: w.name, value: w.name }));
-  const repositories = selections.flatMap((w) => {
-    const language = languages.find((v) => v.name === w.value)!;
-    return language.repositories;
-  });
+  const repositories = (selections.length > 0
+    ? selections.flatMap((w) => {
+        const language = languages.find((v) => v.name === w.value)!;
+        return language.repositories;
+      })
+    : languages.flatMap((w) => w.repositories)
+  ).filter((w) => w.author.includes(query) || w.description.includes(query) || w.name.includes(query));
 
   return (
     <Container>
@@ -102,7 +110,13 @@ const Stargazed: React.VFC = () => {
         {hasContents ? (
           <div>
             <h1 className="text-4xl mt-8 mb-16">Stargazed Web</h1>
-            <Select items={items} selections={selections} onSelectionChanged={onSelectionChanged} />
+            <Select
+              items={items}
+              selections={selections}
+              query={query}
+              onSelectionChanged={onSelectionChanged}
+              onQueryChanged={onQueryChanged}
+            />
             <div className="px-4 text-left">
               <Virtualized repositories={repositories} />
             </div>
